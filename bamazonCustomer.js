@@ -62,7 +62,7 @@ function purchase() {
         connection.query("SELECT ??, ?? FROM ?? WHERE ?? = ?", ["price", "stock_quantity", "products", "item_id", res.selection], function (err, qres) {
             if (parseInt(qres[0].stock_quantity) < parseInt(res.quantity)) {
                 console.log("Insufficient quantity!");
-                // Add inquirer to ask if you'd like to continue shopping, if no close connection
+                end();
             }
             else {
                 console.log("Your total is $" + parseInt(qres[0].price) * parseInt(res.quantity));
@@ -77,9 +77,28 @@ function purchase() {
                     ],
                     function(err, response) {
                         console.log(response.affectedRows + " products updated!\n");
+                        end();
 
                 })
             }
         })
+    })
+}
+
+function end() {
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'end',
+            message: '\nWould you like to continue?',
+            choices: ["Yes", "No"]
+        }
+    ]).then(function(answer) {
+        if (answer.end == "Yes") {
+            start();
+        }
+        else {
+            connection.end();
+        }
     })
 }
