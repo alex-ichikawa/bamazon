@@ -59,27 +59,30 @@ function purchase() {
             }
         }
     ]).then(function (res) {
-        connection.query("SELECT ??, ?? FROM ?? WHERE ?? = ?", ["price", "stock_quantity", "products", "item_id", res.selection], function (err, qres) {
+        connection.query("SELECT ??, ??, ?? FROM ?? WHERE ?? = ?", ["price", "stock_quantity", "product_sales", "products", "item_id", res.selection], function (err, qres) {
             if (parseInt(qres[0].stock_quantity) < parseInt(res.quantity)) {
                 console.log("Insufficient quantity!");
                 end();
             }
             else {
-                console.log("Your total is $" + parseInt(qres[0].price) * parseInt(res.quantity));
-                    connection.query("UPDATE products SET ? WHERE ?",
+                console.log("\r\nYour total is $" + parseInt(qres[0].price) * parseInt(res.quantity));
+                connection.query("UPDATE products SET ?, ? WHERE ?",
                     [
                         {
                             stock_quantity: parseInt(qres[0].stock_quantity) - parseInt(res.quantity)
                         },
                         {
+                            product_sales: parseInt(qres[0].product_sales) + (parseInt(qres[0].price) * parseInt(res.quantity))
+                        },
+                        {
                             item_id: res.selection
                         }
                     ],
-                    function(err, response) {
-                        console.log(response.affectedRows + " products updated!\n");
+                    function (err, response) {
+                        if (err) throw err;
                         end();
 
-                })
+                    })
             }
         })
     })
@@ -93,7 +96,7 @@ function end() {
             message: '\nWould you like to continue?',
             choices: ["Yes", "No"]
         }
-    ]).then(function(answer) {
+    ]).then(function (answer) {
         if (answer.end == "Yes") {
             start();
         }
