@@ -118,8 +118,6 @@ function start() {
                                 return true;
                             }
                         }
-
-                        // add check for existing departments. if does not exist then console log to get supervisor to create department
                     },
                     {
                         type: 'input',

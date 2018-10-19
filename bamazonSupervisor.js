@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+const cTable = require('console.table');
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -28,13 +29,22 @@ function start() {
     ]).then(function (answer) {
         if (answer.selection == "View Produc Sales by Department") {
             dropCreate();
+            let values = [];
+            let header = [];
             connection.query(
                 "SELECT * FROM ??", ["supervisor"], function (err, res) {
                     if (err) throw err;
                     for (let i = 0; i < res.length; i++) {
-                        console.log(`${res[i].department_id} | ${res[i].department_name} | ${res[i].over_head_costs} | ${res[i].product_sales} | ${res[i].total_profit}`);
+                        values.push([res[i].department_id, res[i].department_name, res[i].over_head_costs, res[i].product_sales, res[i].total_profit]);
                     }
-                    end();
+                    connection.query(
+                        "DESCRIBE supervisor", function (err, res) {
+                            for (let i = 0; i < res.length; i++) {
+                                header.push(res[i].Field)
+                            }
+                            console.table(header, values);
+                            end();
+                        })
                 })
         }
         else if (answer.selection == "Create New Department") {
