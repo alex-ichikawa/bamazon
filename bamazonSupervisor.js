@@ -24,10 +24,10 @@ function start() {
             type: 'list',
             name: 'selection',
             message: "\r\nWhat would you like to do?",
-            choices: ["View Produc Sales by Department", "Create New Department"]
+            choices: ["View Product Sales by Department", "Create New Department"]
         }
     ]).then(function (answer) {
-        if (answer.selection == "View Produc Sales by Department") {
+        if (answer.selection == "View Product Sales by Department") {
             dropCreate();
             let values = [];
             let header = [];
@@ -107,15 +107,6 @@ function end() {
 function dropCreate() {
     connection.query("DROP TABLE ??", ["total_sales"]);
     connection.query("DROP TABLE ?? ", ["supervisor"]);
-    connection.query("CREATE TABLE total_sales AS (SELECT department_name, SUM(product_sales) as product_sales FROM products GROUP BY department_name);");
-    connection.query("CREATE TABLE supervisor AS (SELECT T0.department_id, T0.department_name ,T0.over_head_costs ,T1.product_sales ,SUM(T1.product_sales - T0.over_head_costs) as total_profit FROM departments T0 LEFT OUTER JOIN total_sales T1 ON T0.department_name = T1.department_name GROUP BY T0.department_name ORDER BY T0.department_id);")
+    connection.query("CREATE TABLE ?? AS (SELECT department_name, SUM(??) as ?? FROM ?? GROUP BY ??);" ,["total_sales", "product_sales", "product_sales", "products", "department_name"]);
+    connection.query("CREATE TABLE ?? AS (SELECT ??, ??, ??, IFNULL(??, 0) as ?? ,SUM(IFNULL(??, 0) - ??) as ?? FROM ?? T0 LEFT OUTER JOIN ?? T1 ON ?? = ?? GROUP BY ?? ORDER BY ??);", ["supervisor", "T0.department_id", "T0.department_name", "T0.over_head_costs", "T1.product_sales", "product_sales", "T1.product_sales", "T0.over_head_costs", "total_profit", "departments", "total_sales", "T0.department_name", "T1.department_name", "T0.department_name", "T0.department_id"])
 }
-
-
-
-
-// connection.query(
-//     "DESCRIBE supervisor", function(err, res) {
-//         console.log(res[0].Field + res[1].Field);
-//     }
-// )

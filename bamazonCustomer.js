@@ -50,7 +50,7 @@ function purchase() {
             name: 'quantity',
             message: "Enter the quantity you'd like to purcahse",
             validate: function (value) {
-                if (isNaN(value) === false) {
+                if (isNaN(value) === false && value > 0) {
                     return true;
                 }
                 else {
@@ -60,8 +60,12 @@ function purchase() {
         }
     ]).then(function (res) {
         connection.query("SELECT ??, ??, ?? FROM ?? WHERE ?? = ?", ["price", "stock_quantity", "product_sales", "products", "item_id", res.selection], function (err, qres) {
-            if (parseInt(qres[0].stock_quantity) < parseInt(res.quantity)) {
-                console.log("Insufficient quantity!");
+            if (parseInt(qres[0].stock_quantity) == 0) {
+                console.log("Out of stock");
+                end();
+            }
+            else if (parseInt(qres[0].stock_quantity) < parseInt(res.quantity)) {
+                console.log(`Insufficient quantity in stock to process your order, we have ${qres[0].stock_quantity} in stock`);
                 end();
             }
             else {
@@ -93,7 +97,7 @@ function end() {
         {
             type: 'list',
             name: 'end',
-            message: '\nWould you like to continue?',
+            message: '\nWould you like to continue shopping?',
             choices: ["Yes", "No"]
         }
     ]).then(function (answer) {

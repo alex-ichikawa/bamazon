@@ -66,9 +66,9 @@ CREATE TABLE supervisor AS (
        T0.department_id
        ,T0.department_name
        ,T0.over_head_costs
-       ,T1.product_sales
-       ,SUM(T1.product_sales - T0.over_head_costs) as total_profilts 
-       
+       ,IFNULL(T1.product_sales, 0) as product_sales
+       ,SUM(IFNULL(T1.product_sales, 0) - T0.over_head_costs) as total_profilts 
+
        FROM departments T0 
        LEFT OUTER JOIN total_sales T1 ON T0.department_name = T1.department_name
        GROUP BY T0.department_name
